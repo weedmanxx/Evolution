@@ -1,8 +1,8 @@
 class Herbivore {
 
-  float x, y, xSpeed, ySpeed, speed, sight, memory, intET, eggTime, hatchTime, lifeTime; 
+  float x, y, xSpeed, ySpeed, speed, sight, memory, intET, eggTime, hatchTime, lifeTime, lifeLeft, maxFood, food; 
   
-  Herbivore(float _x, float _y, float _speed, float _sight, float _memory, float _eggTime, float _hatchTime, float _lifeTime) {
+  Herbivore(float _x, float _y, float _speed, float _sight, float _memory, float _eggTime, float _hatchTime, float _lifeTime, float _maxFood) {
    
     x = _x;
     y = _y;
@@ -22,6 +22,11 @@ class Herbivore {
     hatchTime = _hatchTime;
     
     lifeTime = _lifeTime;
+    lifeLeft = lifeTime;
+    
+    maxFood = _maxFood;
+    
+    food = round(maxFood/2);
     
   }
   
@@ -37,7 +42,8 @@ class Herbivore {
   void move() {
    
     eggTime -= 1/frameRate;
-    lifeTime -= 1/frameRate;
+    lifeLeft -= 1/frameRate;
+    food -= 1/(frameRate*10);
     
     x += xSpeed;
     y -= ySpeed;

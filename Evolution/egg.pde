@@ -4,12 +4,12 @@ class Egg {
   float hatchTime;
   float x, y;
   
-  float newSpeed, newSight, newMemory, newEggTime, newHatchTime, newLifeTime; 
+  float newSpeed, newSight, newMemory, newEggTime, newHatchTime, newLifeTime, newMaxFood; 
   
   //vvv  Hatched thing stats  vvv
   
   
-  Egg(float _x, float _y, boolean c, float _newSpeed, float _newSight, float _newMemory, float _newEggTime, float _newHatchTime, float _newLifeTime) {
+  Egg(float _x, float _y, boolean c, float _newSpeed, float _newSight, float _newMemory, float _newEggTime, float _newHatchTime, float _newLifeTime, float _newMaxFood) {
     
     newSpeed = _newSpeed;
     newSight = _newSight;
@@ -30,6 +30,50 @@ class Egg {
     newEggTime += evolve();
     newHatchTime += evolve();
     newLifeTime += evolve();
+    newMaxFood += evolve();
+    
+    if(newSpeed < 1) {
+      
+      newSpeed = 1;
+      
+    }
+    
+    if(newSight < 0) {
+     
+      newSight = 0;
+      
+    }
+    
+    if(newMemory < 1) {
+     
+      newMemory = 1;
+      
+    }
+    
+    if(newEggTime < 1) {
+     
+      newEggTime = 1;
+      
+    }
+    
+    if(newHatchTime < 1) {
+      
+      newHatchTime = 1;
+      
+    }
+    
+    if(newLifeTime < 1) {
+     
+      newLifeTime = 1;
+      
+    }
+    
+    if(newMaxFood < 2) {
+     
+      newMaxFood = 2;
+      
+    }
+    
     
   }
   
@@ -47,6 +91,15 @@ class Egg {
     
     int changeAmount = 0;
     int keepChanging;
+    int negative = 0;
+    
+    negative = int(random(0, 2));
+    
+    if(negative == 0) {
+     
+      negative = -1;
+      
+    }
     
     keepChanging = int(random(1000));
     
@@ -58,7 +111,7 @@ class Egg {
       
     }
     
-    return changeAmount;
+    return changeAmount * negative;
     
   }
   

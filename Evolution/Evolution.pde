@@ -5,8 +5,22 @@ ArrayList < Egg > eggs = new ArrayList < Egg > ();
 
 boolean drawSight = false;
 
-void setup() {
 
+
+void setup() {
+ 
+ //Table table = new Table(); 
+  
+ //table.addColumn("Time (seconds)"); 
+ //table.addColumn("Speed");
+ //table.addColumn("Sight");
+ //table.addColumn("Memory"); 
+ //table.addColumn("Time per egg layed");
+ //table.addColumn("Time for egg to hatch");
+ //table.addColumn("Life time");
+ 
+ textSize(16);  
+  
  fullScreen();
  noStroke();
 
@@ -14,9 +28,7 @@ void setup() {
   
    ===~~~---> TO DO <---~~~===
  
-   - fix life time
-   - fix starting parameters
-   - REALLY need to fix starting parameters
+   - fine tune starting parameters
    - add food/hunger
    - Ask dino for suggestions
  
@@ -24,25 +36,134 @@ void setup() {
 
 
  //x, y, speed, sight, how long thing remembers other thing, time per egg layed, time for said egg to hatch, lifetime
- carnivores.add(new Carnivore(random(width), random(height), 5, 500, 5, 5, .5, 5));
- herbivores.add(new Herbivore(random(width), random(height), 4, 500, 5, 2, .5, 5));
+ 
+ for(int i = 0; i < 2; i++) {
+ 
+ //carnivores.add(new Carnivore(random(width), random(height), 5, 500, 5, 5000, 5, 50));
+ herbivores.add(new Herbivore(random(width), random(height), 2, 2000, 5, 3, 2, 10, 5));
+
+ }
+ 
+ for(int i = 0; i < 10; i++) {
+ 
+ foods.add(new Food());
+   
+ }
 
 }
 
 void draw() {
 
  background(255);
+ 
+ printAvgs();
 
  carnivoreActions();
  herbivoreActions();
  death();
  eggActions();
+ foodStuff();
+ 
+ for(Herbivore h : herbivores) {
+  
+   h.x = mouseX;
+   h.y = mouseY;
+   
+ }
+ 
 
+}
+
+void foodStuff() {
+ 
+  for(Food f : foods) {
+    
+    f.display();
+    
+  }
+  
+}
+
+void printAvgs() {
+ 
+    int i = 0;
+    float totalSpeed = 0;
+    float totalSight = 0;
+    float totalMemory = 0;
+    float totalEggTime = 0;
+    float totalLifeTime = 0;
+    float totalHatchTime = 0; 
+    float totalFood = 0;
+     
+  for(Herbivore h : herbivores) {
+   
+    i++;
+    
+    totalSpeed += h.speed;
+    totalSight += h.sight;
+    totalMemory += h.memory;
+    totalEggTime += h.intET;
+    totalLifeTime += h.lifeTime;
+    totalHatchTime += h.hatchTime;
+    totalFood += h.food;
+    
+  }
+  
+  String avg = "Averages - Speed: " + (totalSpeed / i) + ", Sight: " + totalSight / i + ", Memory: " + totalMemory / i + ", Time per egg layed: " + totalEggTime / i + ", Time for egg to hatch: " + totalHatchTime / i + ", Lifetime: " + totalLifeTime / i + ", Food: " + totalFood / i;
+  
+  println(avg);
+  
+  //println("Averages - Speed: " + totalSpeed / i + ", Sight: " + totalSight / i + ", Memory: " + totalMemory / i + ", Time per egg layed: " + totalEggTime / i + ", Time for egg to hatch: " + totalHatchTime / i + ", Lifetime: " + totalLifeTime / i);
+  
+  stroke(0);
+  fill(0);
+  text(avg, 4, height - 5);
+  
 }
 
 void mousePressed() {
 
-
+    int i = 0;
+    float totalSpeed = 0;
+    float totalSight = 0;
+    float totalMemory = 0;
+    float totalEggTime = 0;
+    float totalLifeTime = 0;
+   
+  
+  for(int j = 0; j < 5; j++) {
+   
+    if(j == 2) {
+    
+    println("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+      
+    } else {
+   
+    println("");
+   
+    }
+    
+  }
+  
+ 
+  
+  for(Herbivore h : herbivores) {
+   
+    i++;
+    
+    println("Heribvore #" + i + " - Speed: " + h.speed + ", Sight: " + h.sight + ", Memory: " + h.memory + ", Time per egg layed: " + h.intET + ", Life time: " + h.lifeTime);
+    
+    totalSpeed += h.speed;
+    totalSight += h.sight;
+    totalMemory += h.memory;
+    totalEggTime += h.intET;
+    totalLifeTime += h.lifeTime;
+    
+  }
+  
+  println("");
+  
+  println("Averages - Speed: " + totalSpeed / i + ", Sight: " + totalSight / i + ", Memory: " + totalMemory / i + ", Time per egg layed: " + totalEggTime / i + ", Lifetime: " + totalLifeTime / i);
 
 }
 
@@ -53,6 +174,8 @@ void keyPressed() {
   drawSight = !drawSight;
 
  }
+ 
+ 
 
 }
 
@@ -60,7 +183,7 @@ void death() {
 
  for (Carnivore c: carnivores) {
 
-  if (c.lifeTime < 0) {
+  if (c.lifeLeft < 0) {
 
    carnivores.remove(c);
    break;
@@ -71,7 +194,7 @@ void death() {
 
  for (Herbivore h: herbivores) {
 
-  if (h.lifeTime < 0) {
+  if (h.lifeLeft < 0) {
 
    herbivores.remove(h);
    break;
@@ -185,6 +308,40 @@ void herbivoreActions() {
 
   }
   
+  
+  if(h.food < h.maxFood) {
+    for (Food f: foods) {
+
+   if (h.sight > dist(h.x, h.y, f.x, f.y)) {
+
+    float xDist, yDist, hyp, speedCoeff;
+
+    xDist = h.x - f.x;
+    yDist = h.y - f.y;
+
+    hyp = dist(f.x, f.y, h.x, h.y);
+
+    speedCoeff = h.speed / hyp;
+
+    h.xSpeed = -xDist * speedCoeff;
+    h.ySpeed = yDist * speedCoeff;
+    
+    if(dist(f.x, f.y, h.x, h.y) < 10) {
+       
+      h.food++;   
+      foods.remove(f);
+      
+      
+    } 
+   }
+
+    break;
+
+  }
+  
+  }
+  
+  
  }
  
 }
@@ -200,7 +357,7 @@ void hatching() {
 
    } else {
 
-    herbivores.add(new Herbivore(e.x, e.y, e.newSpeed, e.newSight, e.newMemory, e.newEggTime, e.newHatchTime, e.newLifeTime));
+    herbivores.add(new Herbivore(e.x, e.y, e.newSpeed, e.newSight, e.newMemory, e.newEggTime, e.newHatchTime, e.newLifeTime, e.newMaxFood));
 
    }
 
@@ -221,7 +378,7 @@ void eggLaying() {
 
    h.eggTime = h.intET;
 
-   eggs.add(new Egg(h.x, h.y, false, h.speed, h.sight, h.memory, h.eggTime, h.hatchTime, h.lifeTime));
+   eggs.add(new Egg(h.x, h.y, false, h.speed, h.sight, h.memory, h.eggTime, h.hatchTime, h.lifeTime, h.maxFood));
 
   }
 
@@ -233,10 +390,18 @@ void eggLaying() {
 
    c.eggTime = c.intET;
 
-   eggs.add(new Egg(c.x, c.y, true, c.speed, c.sight, c.memory, c.eggTime, c.hatchTime, c.lifeTime));
+   eggs.add(new Egg(c.x, c.y, true, c.speed, c.sight, c.memory, c.eggTime, c.hatchTime, c.lifeTime, /* PLACE HOLD */ 0));
 
   }
 
  }
 
 }
+
+float round(float number, float decimal) {
+    
+  return (float)(round((number*pow(10, decimal))))/pow(10, decimal);
+  
+  //stolen from internet http://stackoverflow.com/questions/9627182/how-do-i-limit-decimal-precision-in-processing
+  
+} 

@@ -15,7 +15,7 @@ class Food {
    
     fill(#85E31B); //Light green
     noStroke();
-    ellipse(x, y, 3, 3);
+    ellipse(x, y, 4, 4);
     
   }
   

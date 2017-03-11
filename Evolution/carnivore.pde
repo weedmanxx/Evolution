@@ -1,6 +1,6 @@
 class Carnivore {
  
-  float x, y, xSpeed, ySpeed, speed, sight, memory, intET, eggTime, hatchTime, lifeTime; 
+  float x, y, xSpeed, ySpeed, speed, sight, memory, intET, eggTime, hatchTime, lifeTime, lifeLeft; 
   
   Carnivore(float _x, float _y, float _speed, float _sight, float _memory, float _eggTime, float _hatchTime, float _lifeTime) {
    
@@ -22,6 +22,7 @@ class Carnivore {
     hatchTime = _hatchTime;
     
     lifeTime = _lifeTime;
+    lifeLeft = lifeTime;
     
   }
   
@@ -36,7 +37,7 @@ class Carnivore {
   void move() {
    
     eggTime -= 1/frameRate;
-    lifeTime -= 1/frameRate;
+    lifeLeft -= 1/frameRate;
     
     x += xSpeed;
     y -= ySpeed;
